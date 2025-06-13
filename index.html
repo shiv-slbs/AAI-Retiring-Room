@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+</head>
+<body>
+    <h1>Enter Personal Details</h1>
+    <form id="personalDetailsForm">
+        <label for="fullName">Full Name:</label>
+        <input type="text" id="fullName" required><br><br>
+        
+        <label for="mobileNo">Mobile No:</label>
+        <input type="text" id="mobileNo" required><br><br>
+        
+        <label for="emailId">Email ID:</label>
+        <input type="email" id="emailId" required><br><br>
+        
+        <button type="submit">Proceed</button>
+    </form>
+
+    <script>
+        document.getElementById('personalDetailsForm').addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+            const data = {
+                fullName: document.getElementById('fullName').value,
+                mobileNo: document.getElementById('mobileNo').value,
+                emailId: document.getElementById('emailId').value,
+            };
+
+            const response = await fetch('/submit', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data),
+            });
+
+            const result = await response.text();
+            alert(result);
+        });
+    </script>
+</body>
+</html>

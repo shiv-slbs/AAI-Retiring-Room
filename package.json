@@ -1,0 +1,27 @@
+{
+  "name": "aai-retiring-room",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/shiv-slbs/AAI-Retiring-Room.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/shiv-slbs/AAI-Retiring-Room/issues"
+  },
+  "homepage": "https://github.com/shiv-slbs/AAI-Retiring-Room#readme",
+  "description": "",
+  "dependencies": {
+    "body-parser": "^2.2.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.5.0",
+    "express": "^5.1.0",
+    "mongoose": "^8.15.1"
+  }
+}
