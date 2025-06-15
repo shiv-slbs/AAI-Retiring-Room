@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Retiring Room Booking</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Header -->
+  <header>
+    <img src="https://upload.wikimedia.org/wikipedia/en/thumb/e/e0/Airports_Authority_of_India_logo.svg/2560px-Airports_Authority_of_India_logo.svg.png" alt="AAI Logo">
+    <h1>Retiring Room Booking</h1>
+  </header>
+
+  <!-- Welcome Message -->
+  <div id="welcomeBox"></div>
+
+  <!-- Sign In Section -->
+  <section id="signInSection">
+    <h2>Sign In</h2>
+    <div class="form-group">
+      <label for="fullname">Full Name</label>
+      <input type="text" id="fullname" placeholder="Enter your full name">
+    </div>
+
+    <div class="form-group">
+      <label for="mobile">Mobile Number</label>
+      <input type="text" id="mobile" placeholder="Enter your mobile number">
+    </div>
+
+    <div class="form-group">
+      <label for="email">Email Address</label>
+      <input type="email" id="email" placeholder="Enter your email">
+    </div>
+
+    <button class="btn" onclick="signIn()">Sign In</button>
+    <div class="signin-footer">Already a member?</div>
+  </section>
+
+  <!-- Booking Sections -->
+  <div id="booking-sections">
+    <!-- Booking Details Section -->
+    <section>
+      <h2>Enter Booking Details</h2>
+      <div class="form-group">
+        <label for="arrival">Arrival Flight No.</label>
+        <input type="text" id="arrival" placeholder="e.g. AI 763">
+      </div>
+
+      <div class="form-group">
+        <label for="departure">Departure Flight No.</label>
+        <input type="text" id="departure" placeholder="e.g. AI 764">
+      </div>
+
+      <div class="form-group">
+        <label for="checkin">Check-in Date</label>
+        <input type="date" id="checkin">
+      </div>
+
+      <div class="form-group">
+        <label for="checkout">Check-out Date</label>
+        <input type="date" id="checkout">
+      </div>
+
+      <div class="form-group">
+        <label for="roomType">Select Room Type</label>
+        <select id="roomType" onchange="updateAmount()">
+          <option value="">-- Select Room Type --</option>
+          <option value="1">Room Type 1 (₹700/hr)</option>
+          <option value="2">Room Type 2 (₹1000/hr)</option>
+          <option value="3">Room Type 3 (₹1500/hr)</option>
+        </select>
+      </div>
+    </section>
+
+    <!-- Time Chosen & Pricing Section -->
+    <section>
+      <h2>Time Chosen & Pricing</h2>
+
+      <div class="form-group">
+        <label for="startHour">Start Hour</label>
+        <select id="startHour" onchange="updateAmount()">
+          <option value="">-- Select Start Hour --</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="endHour">End Hour</label>
+        <select id="endHour" onchange="updateAmount()">
+          <option value="">-- Select End Hour --</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Total Amount (Excl. GST):</label>
+        <div id="totalAmount">₹0</div>
+      </div>
+
+      <button class="btn" onclick="showSummary()">Book Now</button>
+    </section>
+
+    <!-- Booking Summary Section -->
+    <section id="summarySection" style="display:none;">
+      <h2>Booking Summary</h2>
+      <div class="form-group"><strong>Full Name:</strong> <span id="summaryName"></span></div>
+      <div class="form-group"><strong>Mobile:</strong> <span id="summaryMobile"></span></div>
+      <div class="form-group"><strong>Email:</strong> <span id="summaryEmail"></span></div>
+      <div class="form-group"><strong>Arrival Flight:</strong> <span id="summaryArrival"></span></div>
+      <div class="form-group"><strong>Departure Flight:</strong> <span id="summaryDeparture"></span></div>
+      <div class="form-group"><strong>Check-in Date:</strong> <span id="summaryCheckin"></span></div>
+      <div class="form-group"><strong>Check-out Date:</strong> <span id="summaryCheckout"></span></div>
+      <div class="form-group"><strong>Room Type:</strong> <span id="summaryRoomType"></span></div>
+      <div class="form-group"><strong>Start Hour:</strong> <span id="summaryStart"></span></div>
+      <div class="form-group"><strong>End Hour:</strong> <span id="summaryEnd"></span></div>
+
+      <div class="form-group" style="margin-top: 20px;">
+        <strong>Amount (Excl. GST):</strong> ₹<span id="amountExcl"></span><br>
+        <strong>GST (18%):</strong> ₹<span id="gstAmount"></span><br>
+        <strong>Total Amount:</strong> ₹<span id="totalWithGst"></span>
+      </div>
+    </section>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
