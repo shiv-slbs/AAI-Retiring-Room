@@ -1,6 +1,7 @@
   const express = require('express');
   const mongoose = require('mongoose');
   const bodyParser = require('body-parser');
+  require('dotenv').config()
   
   const app = express();
   
@@ -8,7 +9,7 @@
   app.use(bodyParser.json());
   
   // MongoDB connection string
-  const dbURI = 'mongodb+srv://slbs-shiv:Shiva@243445@clusteraai.l4typb5.mongodb.net/?retryWrites=true&w=majority&appName=ClusterAAI';
+  const dbURI = process.env.DB_URL;
   
   mongoose
     .connect(dbURI, { useNewUrlParser: true, useUnifiedTopology: true })

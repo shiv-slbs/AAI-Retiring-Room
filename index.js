@@ -12,7 +12,7 @@ app.use(bodyParser.json());
 
 // MongoDB Connection
 /*
-mongoose.connect('mongodb+srv://slbs-shiv:Shiva@243445@clusteraai.l4typb5.mongodb.net/?retryWrites=true&w=majority&appName=ClusterAAI', 
+mongoose.connect( process.env.DB_URL, 
     { useNewUrlParser: true, useUnifiedTopology: true })
     .then(() => console.log('MongoDB connected'))
     .catch(err => console.log(err));
