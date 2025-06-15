@@ -1,49 +1,62 @@
-<body>
-  <h1>🏨 Retiring Room Booking System</h1>
-  <p>A seamless and intuitive system for booking airport retiring rooms with a focus on user-centric flow and backend stability.</p>
+# 🏨 Retiring Room Booking System
 
-  <h2>📌 Features</h2>
-  <ul>
-    <li>✏️ Secure entry for full name, mobile, and email</li>
-    <li>📅 Smart selection of flight details, dates, and room options</li>
-    <li>🧾 Real-time charge display with taxes</li>
-    <li>💳 Multiple secure payment gateways</li>
-    <li>📧 Instant email confirmation with receipt</li>
-    <li>🔒 Transparent cancellation and policy agreement</li>
-  </ul>
+A streamlined backend-powered platform for airport retiring room reservations. Designed with intuitive flow, modular architecture, and real-time features to enhance user experience and operational efficiency.
 
-  <h2>🧭 Booking Flow</h2>
-  <ol>
-    <li>Enter Personal Info</li>
-    <li>Confirm Booking Details</li>
-    <li>Live Price Breakdown</li>
-    <li>Choose Payment Gateway</li>
-    <li>Receive Confirmation Page</li>
-    <li>Email Receipt Auto-Sent</li>
-  </ol>
+---
 
-  <h2>🛠️ Tech Stack</h2>
-  <ul>
-    <li><strong>Frontend:</strong> HTML, CSS, JS</li>
-    <li><strong>Backend:</strong> Node.js with Express</li>
-    <li><strong>Database:</strong> (Pluggable: MongoDB / PostgreSQL)</li>
-    <li><strong>Email:</strong> Nodemailer or similar</li>
-    <li><strong>Payment:</strong> Razorpay / Stripe</li>
-  </ul>
+## 📌 Key Features
 
-  <h2>📂 Folder Structure</h2>
-  <pre><code>📦retiring-room-booking
- ┣ 📁public
- ┣ 📁routes
- ┣ 📁views
- ┣ 📄server.js
- ┣ 📄package.json
- ┗ 📄README.html</code></pre>
+- **User-Friendly Booking Flow**  
+  Enter personal details, select travel and room options, and proceed through a secure payment and confirmation process.
 
-  <h2>🚧 Status</h2>
-  <p><span class="badge">In Progress</span> UI and backend live. Payment and automation features coming soon.</p>
+- **Dynamic Fare Calculation**  
+  Charges are transparently calculated in real-time, including taxes (SGST & CGST).
 
-  <h2>🙌 Credits</h2>
-  <p>Developed by <strong> <href shiva.wtf > Shivam Kumar</strong> — blending behavioral insight with practical systems thinking to streamline airport hospitality experiences.</p>
-</body>
-</html>
+- **Secure Payments**  
+  Multiple payment gateways supported for flexibility and trust.
+
+- **Email Confirmation System**  
+  Auto-generated receipts sent directly to the user's inbox post-booking.
+
+- **Clear Policy Display**  
+  Terms & conditions, refund policy, and cancellation clauses highlighted before final confirmation.
+
+---
+
+## 🧭 Booking Journey
+
+1. **Step 1** – Personal Info (Full Name, Mobile, Email)  
+2. **Step 2** – Booking Details (Airport, Dates, Room Type, Time Slots)  
+3. **Step 3** – Price Summary with Tax Breakdown  
+4. **Step 4** – Payment Method Selection  
+5. **Step 5** – Booking Confirmation Page  
+6. **Step 6** – Email Receipt Sent Automatically
+
+---
+
+## 🛠️ Tech Stack
+
+- **Frontend**: HTML, CSS, JavaScript (Static or React-friendly)
+- **Backend**: Node.js with Express
+- **Payment Gateway**: (e.g., Razorpay / Stripe)
+- **Email Service**: Nodemailer
+- **Database**: (Modular — integrate MongoDB or PostgreSQL)
+
+---
+
+
+---
+
+## 🚀 Current Status
+
+> ⚙️ **In Development**  
+Working modules include the UI and route flow. Payment gateway integration and email automation are underway.
+
+---
+
+## 🙌 Credits
+
+Crafted by [**Shivam Kumar**] (https://shivam.wtf)  
+Driven by insights from behavioral finance and system design — reimagining user journeys in airport hospitality.
+
+---
