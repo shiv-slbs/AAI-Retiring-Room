@@ -44,6 +44,6 @@
   <p><span class="badge">In Progress</span> UI and backend live. Payment and automation features coming soon.</p>
 
   <h2>🙌 Credits</h2>
-  <p>Developed by <strong>Udayaditya</strong> — blending behavioral insight with practical systems thinking to streamline airport hospitality experiences.</p>
+  <p>Developed by <strong> <href shiva.wtf > Shivam Kumar</strong> — blending behavioral insight with practical systems thinking to streamline airport hospitality experiences.</p>
 </body>
 </html>
