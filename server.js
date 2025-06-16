@@ -8,43 +8,53 @@ require('dotenv').config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
+// Middleware
 app.use(cors());
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Serve HTML
+// Serve HTML SPA
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-// Submit user details and save to users.json
+// POST: Save user to users.json
 app.post('/submit', (req, res) => {
   const { fullName, mobileNo, emailId } = req.body;
-  const newUser = { fullName, mobileNo, emailId };
+  if (!fullName || !mobileNo || !emailId) {
+    return res.status(400).send('Missing required fields.');
+  }
+
+  const newUser = {
+    fullName,
+    mobileNo,
+    emailId,
+    timestamp: new Date().toISOString()
+  };
 
   const filePath = path.join(__dirname, 'data', 'users.json');
-  const existingData = fs.existsSync(filePath) ? JSON.parse(fs.readFileSync(filePath)) : [];
+
+  let existingData = [];
+
+  if (fs.existsSync(filePath)) {
+    const fileContent = fs.readFileSync(filePath, 'utf-8');
+    if (fileContent.trim().length > 0) {
+      try {
+        existingData = JSON.parse(fileContent);
+      } catch (err) {
+        console.error('⚠️ Failed to parse users.json:', err);
+        return res.status(500).send('Corrupted users.json file.');
+      }
+    }
+  }
 
   existingData.push(newUser);
   fs.writeFileSync(filePath, JSON.stringify(existingData, null, 2));
 
-  console.log('User saved:', newUser);
+  console.log('✅ User saved:', newUser);
   res.send('User saved locally to users.json');
 });
 
-// Store booking in bookings.json
-app.post('/api/book', (req, res) => {
-  const booking = req.body;
 
-  const filePath = path.join(__dirname, 'data', 'bookings.json');
-  const existingData = fs.existsSync(filePath) ? JSON.parse(fs.readFileSync(filePath)) : [];
-
-  existingData.push(booking);
-  fs.writeFileSync(filePath, JSON.stringify(existingData, null, 2));
-
-  console.log('Booking saved:', booking);
-  res.send('Booking saved locally to bookings.json');
-});
-
-// Start server
-app.listen( PORT, () => console.log(`📝 Temporary server running at http://localhost:${PORT}`));
+// Launch Server
+app.listen(PORT, () => console.log(`🚀 Server running on http://localhost:${PORT}`));
