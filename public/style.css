@@ -1,130 +1,36 @@
 body {
-  font-family: 'Times New Roman', serif;
-  margin: 0;
-  padding: 0;
-  background-color: #f1f1f1;
+  background-color: #f4f7fa;
 }
 
-header {
-  background-color: #003366;
-  height: 10px;
+h1 {
+  font-family: 'Georgia', serif;
 }
 
-.logo-section {
-  text-align: center;
-  margin: 30px 0 10px;
+.card {
+  border-radius: 12px;
 }
 
-.logo-section img {
-  height: 150px;
+#summarySection {
+  border: 2px solid #000;
+  background-color: #fff;
 }
 
-.logo-title {
-  font-size: 35px;
-  color: #003366;
-  font-weight: bold;
-  margin-top: 10px;
+table th {
+  width: 40%;
+}
+body {
+  background-color: #f5f9ff;
 }
 
-section {
-  background-color: white;
-  padding: 20px;
-  margin: 30px auto;
-  width: 90%;
-  max-width: 600px;
-  border-radius: 8px;
-  box-shadow: 0 0 10px rgba(0,0,0,0.1);
-}
-
-h2 {
-  text-align: center;
-  color: #003366;
-  margin-bottom: 20px;
-}
-
-.form-group {
-  margin-bottom: 15px;
+.card {
+  border-radius: 10px;
 }
 
 label {
-  display: block;
-  font-weight: bold;
-  margin-bottom: 6px;
-}
-
-input, select {
-  width: 100%;
-  padding: 8px;
-  font-size: 15px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-}
-
-.btn {
-  background-color: #003366;
-  color: white;
-  padding: 10px 15px;
-  font-size: 16px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  width: 100%;
-}
-
-.btn:hover {
-  background-color: #002244;
-}
-
-#totalAmount {
-  padding: 8px;
-  background-color: #f5f5f5;
-  border-radius: 4px;
-  font-weight: bold;
-}
-
-.signin-footer {
-  text-align: center;
-  margin-top: 10px;
-}
-
-#booking-sections {
-  display: none;
-}
-
-#welcomeBox {
-  display: none;
-  background-color: #cce5ff;
   color: #003366;
-  padding: 15px;
-  text-align: center;
-  font-size: 18px;
-  font-weight: bold;
 }
 
-@media screen and (max-width: 600px) {
-  section {
-    margin: 15px;
-    padding: 15px;
-  }
-
-  .logo-title {
-    font-size: 18px;
-  }
-}
-
-.logo-section {
-  text-align: center;
-  margin: 40px 0 20px;
-}
-
-.logo-img {
-  height: 110px; /* Increased size */
-}
-
-.logo-title {
-  font-size: 30px; /* Bigger title */
-  color: #003366;
-  font-weight: bold;
-  margin-top: 12px;
-  letter-spacing: 1px;
+#payButton {
+  background-color: #004aad;
+  border-color: #004aad;
 }
