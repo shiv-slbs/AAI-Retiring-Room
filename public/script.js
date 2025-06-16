@@ -1,3 +1,4 @@
+// On load: populate time dropdowns and restrict check-in date
 window.onload = function () {
   const start = document.getElementById("startHour");
   const end = document.getElementById("endHour");
@@ -5,7 +6,17 @@ window.onload = function () {
     start.innerHTML += `<option value="${i}">${i}:00</option>`;
     end.innerHTML += `<option value="${i + 1}">${i + 1}:00</option>`;
   }
+
+  // Set check-in date to today or future
+  const today = new Date().toISOString().split("T")[0];
+  document.getElementById("checkin").setAttribute("min", today);
 };
+
+// Dynamically update checkout's minimum date when checkin is selected
+document.getElementById("checkin").addEventListener("change", function () {
+  const selectedDate = this.value;
+  document.getElementById("checkout").setAttribute("min", selectedDate);
+});
 
 function signIn() {
   const name = document.getElementById("fullname").value.trim();
@@ -66,6 +77,16 @@ function showSummary() {
   const startHour = parseInt(document.getElementById("startHour").value);
   const endHour = parseInt(document.getElementById("endHour").value);
 
+  if (!checkin || !checkout) {
+    alert("Please select both check-in and check-out dates.");
+    return;
+  }
+
+  if (new Date(checkout) < new Date(checkin)) {
+    alert("Check-out date cannot be before check-in date.");
+    return;
+  }
+
   if (!roomType || isNaN(startHour) || isNaN(endHour) || endHour <= startHour) {
     alert("Please select valid room type and time slot.");
     return;
@@ -84,6 +105,7 @@ function showSummary() {
   const gst = amount * 0.18;
   const total = amount + gst;
 
+  // Fill summary
   document.getElementById("summaryName").innerText = name;
   document.getElementById("summaryMobile").innerText = mobile;
   document.getElementById("summaryEmail").innerText = email;
@@ -99,5 +121,9 @@ function showSummary() {
   document.getElementById("gstAmount").innerText = gst.toFixed(2);
   document.getElementById("totalWithGst").innerText = total.toFixed(2);
 
+  // Show summary section
   document.getElementById("summarySection").style.display = "block";
+
+  // Auto scroll to summary section
+  document.getElementById("summarySection").scrollIntoView({ behavior: "smooth" });
 }
