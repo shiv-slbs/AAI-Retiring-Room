@@ -1,51 +1,50 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
+const fs = require('fs');
 const path = require('path');
 require('dotenv').config();
 
-const connectDB = require('./server');
-const User = require('./models/user');
-const Booking = require('./models/Booking');
-
 const app = express();
+const PORT = process.env.PORT || 5000;
 
 app.use(cors());
 app.use(bodyParser.json());
-
-// Serve static frontend from /public
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Serve HTML page
+// Serve HTML
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-// Handle User form
-app.post('/submit', async (req, res) => {
+// Submit user details and save to users.json
+app.post('/submit', (req, res) => {
   const { fullName, mobileNo, emailId } = req.body;
-  try {
-    const user = new User({ fullName, mobileNo, emailId });
-    await user.save();
-    res.send('User submitted successfully');
-  } catch (err) {
-    res.status(400).send('Error saving user: ' + err.message);
-  }
+  const newUser = { fullName, mobileNo, emailId };
+
+  const filePath = path.join(__dirname, 'data', 'users.json');
+  const existingData = fs.existsSync(filePath) ? JSON.parse(fs.readFileSync(filePath)) : [];
+
+  existingData.push(newUser);
+  fs.writeFileSync(filePath, JSON.stringify(existingData, null, 2));
+
+  console.log('User saved:', newUser);
+  res.send('User saved locally to users.json');
 });
 
-// Handle booking
-app.post('/api/book', async (req, res) => {
-  const newBooking = new Booking(req.body);
-  try {
-    await newBooking.save();
-    res.status(201).send('Booking stored successfully');
-  } catch (err) {
-    res.status(400).send('Error storing booking: ' + err.message);
-  }
+// Store booking in bookings.json
+app.post('/api/book', (req, res) => {
+  const booking = req.body;
+
+  const filePath = path.join(__dirname, 'data', 'bookings.json');
+  const existingData = fs.existsSync(filePath) ? JSON.parse(fs.readFileSync(filePath)) : [];
+
+  existingData.push(booking);
+  fs.writeFileSync(filePath, JSON.stringify(existingData, null, 2));
+
+  console.log('Booking saved:', booking);
+  res.send('Booking saved locally to bookings.json');
 });
 
-// Start server after DB is connected
-connectDB().then(() => {
-  const PORT = process.env.PORT || 5000;
-  app.listen(PORT, () => console.log(`🚀 Server running at http://localhost:${PORT}`));
-});
+// Start server
+app.listen( PORT, () => console.log(`📝 Temporary server running at http://localhost:${PORT}`));
