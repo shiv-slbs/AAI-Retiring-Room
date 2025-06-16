@@ -21,38 +21,37 @@ app.get('/', (req, res) => {
 // POST: Save user to users.json
 app.post('/submit', (req, res) => {
   const { fullName, mobileNo, emailId } = req.body;
-  if (!fullName || !mobileNo || !emailId) {
-    return res.status(400).send('Missing required fields.');
-  }
-
-  const newUser = {
-    fullName,
-    mobileNo,
-    emailId,
-    timestamp: new Date().toISOString()
-  };
+  const newUser = { fullName, mobileNo, emailId };
 
   const filePath = path.join(__dirname, 'data', 'users.json');
-
   let existingData = [];
 
   if (fs.existsSync(filePath)) {
-    const fileContent = fs.readFileSync(filePath, 'utf-8');
-    if (fileContent.trim().length > 0) {
-      try {
-        existingData = JSON.parse(fileContent);
-      } catch (err) {
-        console.error('⚠️ Failed to parse users.json:', err);
-        return res.status(500).send('Corrupted users.json file.');
-      }
+    try {
+      const raw = fs.readFileSync(filePath);
+      existingData = raw.length ? JSON.parse(raw) : [];
+    } catch (err) {
+      return res.status(500).send("Failed to read existing user data.");
     }
   }
 
-  existingData.push(newUser);
-  fs.writeFileSync(filePath, JSON.stringify(existingData, null, 2));
+  const isDuplicate = existingData.some(user =>
+    user.emailId === emailId || user.mobileNo === mobileNo
+  );
 
-  console.log('✅ User saved:', newUser);
-  res.send('User saved locally to users.json');
+  if (isDuplicate) {
+    return res.status(409).send("User already exists with this email or mobile number.");
+  }
+
+  existingData.push(newUser);
+
+  try {
+    fs.writeFileSync(filePath, JSON.stringify(existingData, null, 2));
+    console.log('User saved:', newUser);
+    res.send('User saved successfully.');
+  } catch (err) {
+    res.status(500).send("Failed to save user.");
+  }
 });
 
 

@@ -34,13 +34,18 @@ function signIn() {
   }
 
   fetch("/submit", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ fullName: name, mobileNo: mobile, emailId: email })
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ fullName: name, mobileNo: mobile, emailId: email })
+})
+  .then((res) => {
+    if (!res.ok) {
+      return res.text().then((msg) => { throw new Error(msg); });
+    }
+    return res.text();
   })
-    .then((res) => res.text())
-    .then((msg) => console.log(msg))
-    .catch((err) => console.error("Error saving user:", err));
+  .then((msg) => console.log(msg))
+  .catch((err) => alert(err.message));
 
   document.getElementById("signInSection").style.display = "none";
   document.getElementById("booking-sections").style.display = "block";
