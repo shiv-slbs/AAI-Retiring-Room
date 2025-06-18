@@ -32,6 +32,9 @@ A streamlined backend-powered platform for airport retiring room reservations. D
 5. **Step 5** – Booking Confirmation Page  
 6. **Step 6** – Email Receipt Sent Automatically
 
+![Uploading Screenshot 2025-06-12 183745.png…]()
+
+
 ---
 
 ## 🛠️ Tech Stack
