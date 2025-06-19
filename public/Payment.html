@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Secure Payment - AAI Retiring Room</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      background-color: #f8f9fa;
+    }
+    .card {
+      max-width: 500px;
+      margin: 50px auto;
+    }
+  </style>
+</head>
+<body>
+  <div class="card p-4 shadow">
+    <h4 class="text-center text-primary">Complete Your Payment</h4>
+    <p>Select a payment method:</p>
+    <select id="paymentMethod" class="form-select mb-3">
+      <option>UPI</option>
+      <option>Net Banking</option>
+      <option>Credit/Debit Card</option>
+      <option>Wallet</option>
+      <option>Pay at Counter</option>
+    </select>
+
+    <button class="btn btn-success w-100" onclick="completePayment()">Confirm Payment</button>
+  </div>
+
+  <script>
+    function completePayment() {
+      // After "payment" simulate redirection
+      localStorage.setItem('bookingConfirmed', 'true');
+      window.location.href = "index.html";
+    }
+  </script>
+</body>
+</html>

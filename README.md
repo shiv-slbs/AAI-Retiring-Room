@@ -59,7 +59,7 @@ Working modules include the UI and route flow. Payment gateway integration and e
 
 ## 🙌 Credits
 
-Crafted with ❤️ by [**Shivam Kumar**](https://shivam.wtf)
+Crafted with ❤️ by [**Shivam Kumar**](https://shivam.wtf) and Udayaditya Parbat
 Driven by insights from behavioral finance and system design — reimagining user journeys in airport hospitality.
 
 ---
