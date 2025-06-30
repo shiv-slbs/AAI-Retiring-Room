@@ -16,12 +16,13 @@
     "url": "https://github.com/shiv-slbs/AAI-Retiring-Room/issues"
   },
   "homepage": "https://github.com/shiv-slbs/AAI-Retiring-Room#readme",
-  "description": "",
+  "description": "A streamlined backend-powered platform for airport retiring room reservations. Designed with intuitive flow, modular architecture, and real-time features to enhance user experience and operational efficiency.",
   "dependencies": {
     "body-parser": "^2.2.0",
     "cors": "^2.8.5",
     "dotenv": "^16.6.1",
     "express": "^5.1.0",
     "mongoose": "^8.16.1"
-  }
+  },
+  "type": "commonjs"
 }
