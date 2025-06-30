@@ -15,7 +15,7 @@ document.getElementById("checkin").addEventListener("change", function () {
   document.getElementById("checkout").setAttribute("min", this.value);
 });
 
-// Sign In Validation
+// Sign In Validation with Server-Side Duplicate Check
 function signIn() {
   const name = document.getElementById("fullname").value.trim();
   const mobile = document.getElementById("mobile").value.trim();
@@ -39,11 +39,39 @@ function signIn() {
     return;
   }
 
-  document.getElementById("signInSection").style.display = "none";
-  document.getElementById("booking-sections").style.display = "block";
-  document.getElementById("welcomeBox").style.display = "block";
-  document.getElementById("welcomeBox").innerText = `Welcome, ${name}`;
+  // Send to server for duplicate check and save
+  fetch("/submit", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      fullName: name,
+      mobileNo: mobile,
+      emailId: email
+    })
+  })
+    .then(response => {
+      if (response.status === 409) {
+        throw new Error("User already exists with this email or mobile number.");
+      }
+      if (!response.ok) {
+        throw new Error("Failed to register user.");
+      }
+      return response.text();
+    })
+    .then(message => {
+      console.log(message);
+      document.getElementById("signInSection").style.display = "none";
+      document.getElementById("booking-sections").style.display = "block";
+      document.getElementById("welcomeBox").style.display = "block";
+      document.getElementById("welcomeBox").innerText = `Welcome, ${name}`;
+    })
+    .catch(err => {
+      alert(err.message);
+    });
 }
+
 
 // Booking Amount Calculation
 function updateAmount() {
