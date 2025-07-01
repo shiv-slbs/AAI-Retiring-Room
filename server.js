@@ -4,9 +4,9 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const path = require('path');
 require('dotenv').config();
-require('./db'); // Initialize MongoDB connection
+require('./db'); // MongoDB connection
 
-const User = require('./models/User');
+const User = require('./models/User'); // Mongoose User model
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -16,12 +16,32 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Serve the frontend HTML
+// Serve the frontend HTML page
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-// POST: Add a new user
+// POST: Check if user exists
+app.post('/check-user', async (req, res) => {
+  try {
+    const { mobileNo, emailId } = req.body;
+
+    const existingUser = await User.findOne({
+      $or: [{ mobileNo }, { emailId }]
+    });
+
+    if (existingUser) {
+      return res.status(200).json({ message: "User exists" });
+    } else {
+      return res.status(404).json({ message: "User not found" });
+    }
+  } catch (error) {
+    console.error('❌ /check-user error:', error);
+    return res.status(500).json({ message: "Server error" });
+  }
+});
+
+// POST: Register user
 app.post('/submit', async (req, res) => {
   const { fullName, mobileNo, emailId } = req.body;
 
@@ -31,7 +51,7 @@ app.post('/submit', async (req, res) => {
 
   try {
     const existingUser = await User.findOne({
-      $or: [{ emailId }, { mobileNo }]
+      $or: [{ mobileNo }, { emailId }]
     });
 
     if (existingUser) {

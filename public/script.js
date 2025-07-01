@@ -16,7 +16,7 @@ document.getElementById("checkin").addEventListener("change", function () {
 });
 
 // Sign In Validation with Server-Side Duplicate Check
-function signIn() {
+async function signIn() {
   const name = document.getElementById("fullname").value.trim();
   const mobile = document.getElementById("mobile").value.trim();
   const email = document.getElementById("email").value.trim();
@@ -39,37 +39,53 @@ function signIn() {
     return;
   }
 
-  // Send to server for duplicate check and save
-  fetch("/submit", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-      fullName: name,
-      mobileNo: mobile,
-      emailId: email
-    })
-  })
-    .then(response => {
-      if (response.status === 409) {
-        throw new Error("User already exists with this email or mobile number.");
-      }
-      if (!response.ok) {
-        throw new Error("Failed to register user.");
-      }
-      return response.text();
-    })
-    .then(message => {
-      console.log(message);
-      document.getElementById("signInSection").style.display = "none";
-      document.getElementById("booking-sections").style.display = "block";
-      document.getElementById("welcomeBox").style.display = "block";
-      document.getElementById("welcomeBox").innerText = `Welcome, ${name}`;
-    })
-    .catch(err => {
-      alert(err.message);
+  try {
+    // Step 1: Check if user already exists
+    const checkRes = await fetch("/check-user", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        mobileNo: mobile,
+        emailId: email
+      })
     });
+
+    if (checkRes.status === 200) {
+      console.log("User exists. Logging in...");
+    } else if (checkRes.status === 404) {
+      // Step 2: Register user if not found
+      const registerRes = await fetch("/submit", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          fullName: name,
+          mobileNo: mobile,
+          emailId: email
+        })
+      });
+
+      if (!registerRes.ok) {
+        throw new Error("Registration failed.");
+      }
+
+      console.log("User registered successfully.");
+    } else {
+      throw new Error("Unexpected error while checking user.");
+    }
+
+    // Step 3: Show booking section regardless of new or existing user
+    document.getElementById("signInSection").style.display = "none";
+    document.getElementById("booking-sections").style.display = "block";
+    document.getElementById("welcomeBox").style.display = "block";
+    document.getElementById("welcomeBox").innerText = `Welcome, ${name}`;
+
+  } catch (err) {
+    alert(err.message);
+  }
 }
 
 
