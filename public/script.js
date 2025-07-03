@@ -10,12 +10,10 @@ window.onload = function () {
   document.getElementById("checkin").setAttribute("min", today);
 };
 
-// Prevent check-out before check-in
 document.getElementById("checkin").addEventListener("change", function () {
   document.getElementById("checkout").setAttribute("min", this.value);
 });
 
-// Sign In Validation with Server-Side Duplicate Check
 async function signIn() {
   const name = document.getElementById("fullname").value.trim();
   const mobile = document.getElementById("mobile").value.trim();
@@ -24,204 +22,246 @@ async function signIn() {
   const nameRegex = /^[A-Za-z\s]+$/;
   const mobileRegex = /^\d{10}$/;
 
-  if (!name || !nameRegex.test(name)) {
-    alert("Please enter a valid name without numbers or symbols.");
-    return;
-  }
-
-  if (!mobileRegex.test(mobile)) {
-    alert("Please enter a valid 10-digit mobile number.");
-    return;
-  }
-
-  if (!email.includes("@")) {
-    alert("Please enter a valid email address.");
-    return;
-  }
+  if (!name || !nameRegex.test(name)) return alert("Enter a valid name.");
+  if (!mobileRegex.test(mobile)) return alert("Enter a valid 10-digit mobile.");
+  if (!email.includes("@")) return alert("Enter a valid email.");
 
   try {
-    // Step 1: Check if user already exists
     const checkRes = await fetch("/check-user", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        mobileNo: mobile,
-        emailId: email
-      })
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ mobileNo: mobile, emailId: email })
     });
 
+    let userId;
     if (checkRes.status === 200) {
-      console.log("User exists. Logging in...");
+      const data = await checkRes.json();
+      userId = data.userId;
+      console.log("User exists.");
     } else if (checkRes.status === 404) {
-      // Step 2: Register user if not found
       const registerRes = await fetch("/submit", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          fullName: name,
-          mobileNo: mobile,
-          emailId: email
-        })
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ fullName: name, mobileNo: mobile, emailId: email })
       });
 
-      if (!registerRes.ok) {
-        throw new Error("Registration failed.");
-      }
-
-      console.log("User registered successfully.");
+      const data = await registerRes.json();
+      if (!registerRes.ok) throw new Error(data.message);
+      userId = data.userId;
+      console.log("User registered.");
     } else {
-      throw new Error("Unexpected error while checking user.");
+      throw new Error("Unexpected response from server.");
     }
 
-    // Step 3: Show booking section regardless of new or existing user
+    localStorage.setItem("userId", userId);
+
     document.getElementById("signInSection").style.display = "none";
     document.getElementById("booking-sections").style.display = "block";
     document.getElementById("welcomeBox").style.display = "block";
     document.getElementById("welcomeBox").innerText = `Welcome, ${name}`;
-
   } catch (err) {
     alert(err.message);
   }
 }
 
-
-// Booking Amount Calculation
-function updateAmount() {
-  const roomType = document.getElementById("roomType").value;
-  const startHour = parseInt(document.getElementById("startHour").value);
-  const endHour = parseInt(document.getElementById("endHour").value);
-  const display = document.getElementById("totalAmount");
-
-  if (!roomType || isNaN(startHour) || isNaN(endHour)) {
-    display.textContent = "₹0";
-    return;
-  }
-
-  if (endHour <= startHour) {
-    display.textContent = "Invalid time slot";
-    return;
-  }
-
-  const rate = roomType === "1" ? 700 : roomType === "2" ? 1000 : 1500;
-  const hours = endHour - startHour;
-  const total = rate * hours;
-
-  display.textContent = `₹${total}`;
-  validateBookingFields(); // re-check booking button status
+function getRoomObjectIdFromDropdown(value) {
+  const roomMap = {
+    "1": "6860f565e00cd2d3135274a7",
+    "2": "6860f565e00cd2d3135274a8",
+    "3": "6860f565e00cd2d3135274a9"
+  };
+  return roomMap[value] || null;
 }
 
-// Booking Summary
+
+
+function updateAmount() {
+  const roomType = document.getElementById('roomType').value;
+  const startHour = parseInt(document.getElementById('startHour').value);
+  const endHour = parseInt(document.getElementById('endHour').value);
+  const amountSpan = document.getElementById('totalAmount');
+
+  // Room rates per hour
+  const rates = {
+    "1": 700,
+    "2": 1000,
+    "3": 1500
+  };
+
+  // Validate inputs
+  if (!roomType || isNaN(startHour) || isNaN(endHour) || startHour >= endHour) {
+    amountSpan.textContent = "₹0";
+    return;
+  }
+
+  const hours = endHour - startHour;
+  const rate = rates[roomType];
+  const totalAmount = hours * rate;
+
+  amountSpan.textContent = `₹${totalAmount}`;
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  const startHourSelect = document.getElementById("startHour");
+  const endHourSelect = document.getElementById("endHour");
+
+  for (let i = 0; i <= 23; i++) {
+    const optionStart = new Option(`${i}:00`, i);
+    const optionEnd = new Option(`${i}:00`, i);
+    startHourSelect.add(optionStart);
+    endHourSelect.add(optionEnd);
+  }
+});
+
 function showSummary() {
-  const name = document.getElementById("fullname").value.trim();
-  const mobile = document.getElementById("mobile").value.trim();
-  const email = document.getElementById("email").value.trim();
-  const arrival = document.getElementById("arrival").value.trim();
-  const departure = document.getElementById("departure").value.trim();
+  // Get values from form inputs
+  const name = document.getElementById("fullname").value;
+  const mobile = document.getElementById("mobile").value;
+  const email = document.getElementById("email").value;
+  const arrival = document.getElementById("arrival").value;
+  const departure = document.getElementById("departure").value;
   const checkin = document.getElementById("checkin").value;
   const checkout = document.getElementById("checkout").value;
   const roomType = document.getElementById("roomType").value;
   const startHour = parseInt(document.getElementById("startHour").value);
   const endHour = parseInt(document.getElementById("endHour").value);
 
-  if (!name || !mobile || !email || !arrival || !departure || !checkin || !checkout || !roomType || isNaN(startHour) || isNaN(endHour)) {
-    alert("Please fill all fields correctly.");
+  const roomTypeMap = {
+    "1": { label: "Room Type 1 (₹700/hr)", rate: 700 },
+    "2": { label: "Room Type 2 (₹1000/hr)", rate: 1000 },
+    "3": { label: "Room Type 3 (₹1500/hr)", rate: 1500 }
+  };
+
+  if (!roomTypeMap[roomType] || isNaN(startHour) || isNaN(endHour) || startHour >= endHour) {
+    alert("Please select a valid Room Type and valid Start/End Hour.");
     return;
   }
 
-  if (endHour <= startHour) {
-    alert("End hour must be after start hour.");
-    return;
-  }
-
-  const checkinDate = new Date(checkin);
-  const checkoutDate = new Date(checkout);
-  if (checkoutDate < checkinDate) {
-    alert("Check-out date must be the same or after check-in date.");
-    return;
-  }
-
-  const rate = roomType === "1" ? 700 : roomType === "2" ? 1000 : 1500;
-  const roomText = roomType === "1" ? "Room Type 1 (₹700/hr)" : roomType === "2" ? "Room Type 2 (₹1000/hr)" : "Room Type 3 (₹1500/hr)";
   const hours = endHour - startHour;
-  const amount = rate * hours;
-  const gst = amount * 0.18;
-  const total = amount + gst;
+  const rate = roomTypeMap[roomType].rate;
+  const baseAmount = hours * rate;
+  const gstAmount = (baseAmount * 0.18).toFixed(2);
+  const totalWithGst = (baseAmount + parseFloat(gstAmount)).toFixed(2);
 
-  document.getElementById("summaryName").innerText = name;
-  document.getElementById("summaryMobile").innerText = mobile;
-  document.getElementById("summaryEmail").innerText = email;
-  document.getElementById("summaryArrival").innerText = arrival;
-  document.getElementById("summaryDeparture").innerText = departure;
-  document.getElementById("summaryCheckin").innerText = checkin;
-  document.getElementById("summaryCheckout").innerText = checkout;
-  document.getElementById("summaryRoomType").innerText = roomText;
-  document.getElementById("summaryStart").innerText = `${startHour}:00`;
-  document.getElementById("summaryEnd").innerText = `${endHour}:00`;
-  document.getElementById("amountExcl").innerText = amount.toFixed(2);
-  document.getElementById("gstAmount").innerText = gst.toFixed(2);
-  document.getElementById("totalWithGst").innerText = total.toFixed(2);
+  // Set summary values
+  document.getElementById("summaryName").textContent = name;
+  document.getElementById("summaryMobile").textContent = mobile;
+  document.getElementById("summaryEmail").textContent = email;
+  document.getElementById("summaryArrival").textContent = arrival;
+  document.getElementById("summaryDeparture").textContent = departure;
+  document.getElementById("summaryCheckin").textContent = checkin;
+  document.getElementById("summaryCheckout").textContent = checkout;
+  document.getElementById("summaryRoomType").textContent = roomTypeMap[roomType].label;
+  document.getElementById("summaryStart").textContent = `${startHour}:00`;
+  document.getElementById("summaryEnd").textContent = `${endHour}:00`;
+  document.getElementById("amountExcl").textContent = baseAmount.toFixed(2);
+  document.getElementById("gstAmount").textContent = gstAmount;
+  document.getElementById("totalWithGst").textContent = totalWithGst;
 
-  const summary = document.getElementById("summarySection");
-  summary.style.display = "block";
-  summary.scrollIntoView({ behavior: "smooth" });
+  // Show the summary section
+  document.getElementById("summarySection").style.display = "block";
+
+  // Scroll to summary section
+  document.getElementById("summarySection").scrollIntoView({ behavior: "smooth" });
 }
 
-// Enable/Disable Book Now Button
-const bookBtn = document.querySelector('button[onclick="showSummary()"]');
-const bookingFields = [
-  "arrival", "departure", "checkin", "checkout", "roomType", "startHour", "endHour"
-];
-
-function validateBookingFields() {
-  const allFilled = bookingFields.every(id => {
-    const el = document.getElementById(id);
-    return el && el.value.trim() !== "";
-  });
-
-  const start = parseInt(document.getElementById("startHour").value);
-  const end = parseInt(document.getElementById("endHour").value);
-  const validTime = !isNaN(start) && !isNaN(end) && start < end;
-
-  bookBtn.disabled = !(allFilled && validTime);
-}
-
-bookingFields.forEach(id => {
-  document.getElementById(id).addEventListener("input", validateBookingFields);
-});
-
-bookBtn.disabled = true; // initially disabled
 function togglePayButton() {
   const checkbox = document.getElementById("termsCheckbox");
   const payButton = document.getElementById("payButton");
+
   payButton.disabled = !checkbox.checked;
 }
-function redirectToPayment() {
-  window.location.href = 'payment.html';
+
+
+
+
+async function SaveBookingDetails() {
+  try {
+    const userId = localStorage.getItem("userId");
+    const pnr = prompt("Enter PNR Number");
+
+    if (!userId || !pnr) {
+      alert("Missing User ID or PNR!");
+      return;
+    }
+
+    // Extract and parse values from DOM
+    const arrivalFlightNo = document.getElementById("summaryArrival").innerText.trim();
+    const departureFlightNo = document.getElementById("summaryDeparture").innerText.trim();
+    const checkinDate = new Date(document.getElementById("summaryCheckin").innerText);
+    const checkoutDate = new Date(document.getElementById("summaryCheckout").innerText);
+    const roomType = getRoomObjectIdFromDropdown(document.getElementById("roomType").value); // Must return valid Room ObjectId
+    const startHour = parseInt(document.getElementById("summaryStart").innerText);
+    const endHour = parseInt(document.getElementById("summaryEnd").innerText);
+    const amountBeforeGst = parseFloat(document.getElementById("amountExcl").innerText);
+    const gstAmount = parseFloat(document.getElementById("gstAmount").innerText);
+    const totalAmount = parseFloat(document.getElementById("totalWithGst").innerText);
+    const hoursBooked = endHour - startHour;
+
+    // Construct payload matching backend schema
+    const payload = {
+      userId,
+      arrivalFlightNo,
+      departureFlightNo,
+      pnr,
+      checkinDate,
+      checkoutDate,
+      roomType,
+      startHour,
+      endHour,
+      hoursBooked,
+      amount: amountBeforeGst,
+      gst: gstAmount,
+      totalAmount
+    };
+
+    // Send to server
+    const res = await fetch("/save-booking", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    });
+
+    const data = await res.json();
+    if (!res.ok) {
+      throw new Error(data.message || "Booking failed.");
+    }
+
+    alert("✅ Booking saved successfully!");
+  } catch (err) {
+    alert("❌ Booking error: " + err.message);
+  }
 }
 
-// When returning from payment
-window.addEventListener('DOMContentLoaded', () => {
-  if (localStorage.getItem('bookingConfirmed') === 'true') {
-    localStorage.removeItem('bookingConfirmed');
 
-    // Simulated data (replace with actual variables if available)
-    const bookingNo = 'AAI' + Math.floor(Math.random() * 90000 + 10000);
-    const name = document.getElementById('fullname')?.value || 'Guest';
-    const email = document.getElementById('email')?.value || 'guest@example.com';
 
-    document.getElementById('modalBookingNo').textContent = bookingNo;
-    document.getElementById('modalName').textContent = name;
-    document.getElementById('modalEmail').textContent = email;
+async function HandlePayment() {
+  try {
+    await SaveBookingDetails();
 
-    // Generate QR using an API (or use your own logic)
-    const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=Booking:${bookingNo}`;
-    document.getElementById('qrCode').src = qrUrl;
+    // Generate fake booking number
+    const bookingNo = 'AAI' + Math.floor(Math.random() * 1000000).toString().padStart(6, '0');
 
-    const confirmationModal = new bootstrap.Modal(document.getElementById('confirmationModal'));
-    confirmationModal.show();
+    // Extract details from summary
+    const name = document.getElementById("summaryName").innerText;
+    const email = document.getElementById("summaryEmail").innerText;
+
+    // Generate QR code using external service
+    const qrData = `Booking No: ${bookingNo}\nName: ${name}\nEmail: ${email}`;
+    const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(qrData)}`;
+
+    // Populate popup
+    document.getElementById("popupBookingNo").innerText = bookingNo;
+    document.getElementById("popupName").innerText = name;
+    document.getElementById("popupEmail").innerText = email;
+    document.getElementById("popupQRCode").src = qrUrl;
+
+    // Show popup
+    const popup = document.getElementById("paymentConfirmationPopup");
+    popup.style.display = "block";
+    popup.scrollIntoView({ behavior: "smooth" });
+  } catch (error) {
+    alert("Payment failed: " + error.message);
   }
-});
+}
+

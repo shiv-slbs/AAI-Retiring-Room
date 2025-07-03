@@ -137,7 +137,7 @@
         </label>
       </div>
 
-      <button class="btn btn-primary mt-3" id="payButton" disabled onclick="redirectToPayment()">Pay Now</button>
+      <button class="btn btn-primary mt-3" id="payButton" disabled onclick="HandlePayment()">Pay Now</button>
 
     </div>
   </div>
@@ -171,23 +171,16 @@
   <!-- Scripts -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <script src="script.js"></script>
-  <!-- Confirmation Modal -->
-<div class="modal fade" id="confirmationModal" tabindex="-1" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content p-4">
-      <h5 class="modal-title text-success fw-bold">Booking Confirmed ✅</h5>
-      <div class="modal-body">
-        <p><strong>Booking No:</strong> <span id="modalBookingNo"></span></p>
-        <p><strong>Name:</strong> <span id="modalName"></span></p>
-        <p><strong>Email:</strong> <span id="modalEmail"></span></p>
-        <div class="text-center">
-          <img id="qrCode" src="" alt="QR Code" class="img-fluid mt-3" style="max-width: 150px;">
-        </div>
-      </div>
-      <div class="modal-footer">
-        <button class="btn btn-primary" data-bs-dismiss="modal">Close</button>
-      </div>
-    </div>
+  <div id="paymentConfirmationPopup" class="container mt-5 p-4 border border-success rounded bg-light" style="display: none;">
+  <h4 class="text-success fw-bold mb-3">✅ Payment & Booking Confirmed</h4>
+  <p><strong>Booking No:</strong> <span id="popupBookingNo"></span></p>
+  <p><strong>Name:</strong> <span id="popupName"></span></p>
+  <p><strong>Email:</strong> <span id="popupEmail"></span></p>
+  <div class="text-center">
+    <img id="popupQRCode" src="" alt="QR Code" class="img-fluid mt-3" style="max-width: 150px;">
+  </div>
+  <div class="text-end mt-4">
+    <button class="btn btn-outline-success" onclick="document.getElementById('paymentConfirmationPopup').style.display='none'">Close</button>
   </div>
 </div>
 
